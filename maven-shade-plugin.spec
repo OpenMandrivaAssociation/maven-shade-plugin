@@ -1,6 +1,6 @@
 Name:           maven-shade-plugin
 Version:        1.4
-Release:        3
+Release:        5
 Summary:        This plugin provides the capability to package the artifact in an uber-jar
 
 Group:          Development/Java

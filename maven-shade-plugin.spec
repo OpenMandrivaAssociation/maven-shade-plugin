@@ -1,19 +1,24 @@
 %{?_javapackages_macros:%_javapackages_macros}
 Name:           maven-shade-plugin
-Version:        2.1
-Release:        1.0%{?dist}
+Version:        2.3
+Release:        1
 Summary:        This plugin provides the capability to package the artifact in an uber-jar
 License:        ASL 2.0
 URL:            http://maven.apache.org/plugins/%{name}
 Source0:        http://repo2.maven.org/maven2/org/apache/maven/plugins/%{name}/%{version}/%{name}-%{version}-source-release.zip
 BuildArch:      noarch
 
+
+# Fix MSHADE-168 (ManifestResourceTransformer manifestEntries map
+# declares wrong generic type).
+Patch0:         %{name}-MSHADE-168.patch
+
 BuildRequires:  maven-local
 BuildRequires:  java-devel
 BuildRequires:  mvn(asm:asm)
 BuildRequires:  mvn(asm:asm-commons)
 BuildRequires:  mvn(org.apache.maven.plugin-tools:maven-plugin-annotations)
-BuildRequires:  mvn(org.apache.maven.plugins:maven-plugins)
+BuildRequires:  mvn(org.apache.maven.plugins:maven-plugins:pom:)
 BuildRequires:  mvn(org.apache.maven.shared:maven-dependency-tree)
 BuildRequires:  mvn(org.apache.maven:maven-artifact)
 BuildRequires:  mvn(org.apache.maven:maven-compat)
@@ -45,6 +50,7 @@ Summary:        API documentation for %{name}
 %setup -q
 rm src/test/jars/plexus-utils-1.4.1.jar
 ln -s $(build-classpath plexus/utils) src/test/jars/plexus-utils-1.4.1.jar
+%patch0 -p2
 
 %build
 # A class from aopalliance is not found. Simply adding BR does not solve it

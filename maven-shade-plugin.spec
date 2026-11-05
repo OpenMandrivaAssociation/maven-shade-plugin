@@ -3,6 +3,7 @@ Name:           maven-shade-plugin
 Version:        3.6.2
 Release:        1
 Summary:        This plugin provides the capability to package the artifact in an uber-jar
+Group:          Development/Java
 License:        ASL 2.0
 URL:            https://maven.apache.org/plugins/%{name}
 Source0:        https://github.com/apache/maven-shade-plugin/archive/refs/tags/maven-shade-plugin-%{version}.tar.gz
@@ -12,12 +13,13 @@ BuildRequires:	maven
 BuildRequires:	java-current-devel
 BuildSystem:	maven
 
-BuildRequires:  mvn(org.apache.maven.plugins:maven-plugins:pom:)
-BuildRequires:  mvn(org.ow2.asm:asm)
-BuildRequires:  mvn(org.ow2.asm:asm-commons)
+BuildRequires:  maven-plugins-pom
+BuildRequires:  maven-components
+BuildRequires:  mvn(org.ow2.asm:asm) >= 9
+BuildRequires:  mvn(org.ow2.asm:asm-commons) >= 9
 BuildRequires:  mvn(org.jdom:jdom2)
-BuildRequires:  mvn(org.vafer:jdependency)
-BuildRequires:  mvn(org.codehaus.plexus:plexus-utils)
+BuildRequires:  jdependency >= 2.17
+BuildRequires:  plexus-utils >= 3.6.0
 
 Obsoletes:      maven2-plugin-shade <= 0:2.0.8
 Provides:       maven2-plugin-shade = 1:%{version}-%{release}

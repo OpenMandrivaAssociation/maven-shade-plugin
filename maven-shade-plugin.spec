@@ -7,6 +7,9 @@ License:        ASL 2.0
 URL:            https://maven.apache.org/plugins/%{name}
 Source0:        https://github.com/apache/maven-shade-plugin/archive/refs/tags/maven-shade-plugin-%{version}.tar.gz
 BuildArch:      noarch
+# Literal, so the first rpmbuild -bs records them before sysjar is installed.
+BuildRequires:	maven
+BuildRequires:	java-current-devel
 BuildSystem:	maven
 
 BuildRequires:  mvn(org.apache.maven.plugins:maven-plugins:pom:)

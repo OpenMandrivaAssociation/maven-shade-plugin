@@ -15,6 +15,9 @@ BuildSystem:	maven
 
 BuildRequires:  maven-plugins-pom
 BuildRequires:  maven-components
+BuildRequires:	mvn(com.google.inject:guice-parent:pom::)
+BuildRequires:	mvn(org.slf4j:slf4j-parent:pom::)
+BuildRequires:	mvn(org.codehaus.plexus:plexus-containers:pom::)
 BuildRequires:  mvn(org.ow2.asm:asm) >= 9
 BuildRequires:  mvn(org.ow2.asm:asm-commons) >= 9
 BuildRequires:  mvn(org.jdom:jdom2)

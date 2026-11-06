@@ -42,6 +42,34 @@ Summary:        API documentation for %{name}
 %endif
 %prep
 %setup -q -n maven-shade-plugin-maven-shade-plugin-%{version}
+# JUnit and Hamcrest are not imported. Upstream marked the first copy compile.
+python - <<'PY'
+import xml.etree.ElementTree as ET
+NS = "http://maven.apache.org/POM/4.0.0"
+ET.register_namespace("", NS)
+
+def local(tag):
+    return tag.split("}", 1)[-1]
+
+tree = ET.parse("pom.xml")
+root = tree.getroot()
+drop = {"junit", "hamcrest", "hamcrest-core"}
+for deps in list(root.iter()):
+    if local(deps.tag) != "dependencies":
+        continue
+    for dep in list(deps):
+        artifact = ""
+        scope = ""
+        for node in dep:
+            name = local(node.tag)
+            if name == "artifactId":
+                artifact = (node.text or "").strip()
+            elif name == "scope":
+                scope = (node.text or "").strip()
+        if artifact in drop and scope != "test":
+            deps.remove(dep)
+tree.write("pom.xml", encoding="utf-8", xml_declaration=True)
+PY
 
 %files -f .mfiles
 %doc LICENSE README.md

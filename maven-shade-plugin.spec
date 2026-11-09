@@ -1,7 +1,7 @@
 %bcond_with javadoc
 Name:           maven-shade-plugin
 Version:        3.6.2
-Release:        1
+Release:        2
 Summary:        This plugin provides the capability to package the artifact in an uber-jar
 Group:          Development/Java
 License:        ASL 2.0
@@ -72,6 +72,33 @@ for deps in list(root.iter()):
         if artifact in drop and scope != "test":
             deps.remove(dep)
 tree.write("pom.xml", encoding="utf-8", xml_declaration=True)
+PY
+# ShadeMojo injects Shader by @Named. The published jar had the annotation
+# and no sisu index, so the component was null.
+python - <<'PY'
+import re
+from pathlib import Path
+
+def named_in(root):
+    names = []
+    for path in sorted(Path(root).rglob("*.java")):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+        text = re.sub(r"//.*?$", "", text, flags=re.M)
+        match = re.search(r"\b(?:class|interface|enum)\s+([A-Za-z0-9_]+)", text)
+        if not match or "@Named" not in text[:match.start()]:
+            continue
+        pkg = re.search(r"(?m)^package\s+([A-Za-z0-9_.]+)\s*;", text)
+        if pkg:
+            names.append(pkg.group(1) + "." + match.group(1))
+    return names
+
+names = named_in("src/main/java")
+if names != ["org.apache.maven.plugins.shade.DefaultShader"]:
+    raise SystemExit("expected DefaultShader, got " + str(names))
+dest = Path("src/main/resources/META-INF/sisu")
+dest.mkdir(parents=True, exist_ok=True)
+(dest / "javax.inject.Named").write_text("\n".join(names) + "\n", encoding="utf-8")
 PY
 
 %files -f .mfiles
